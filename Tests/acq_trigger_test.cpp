@@ -894,6 +894,12 @@ int main(int argc, char **argv){
         return 1;
     }
 
+    int ret = rp_CalibInit();
+    if(ret != RP_HW_CALIB_OK){
+        fprintf(stderr, "Calib init error\n");
+        return 1;
+    }
+
     g_result.clear();
 
     if (s.testTrig && !s.noDAC){
