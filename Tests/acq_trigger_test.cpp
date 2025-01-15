@@ -49,7 +49,7 @@ struct settings{
 
 
 auto printHelp(char* prog) -> void {
-    std::cout << prog << "[-t1] [-t2] [-t3] [-a] [-d] [-b] [-v] [-s]\n";
+    std::cout << prog << "[-t1] [-t2] [-t3] [-t4] [-t5] [-a] [-d] [-b] [-v] [-s]\n";
 
     auto dac = getDACChannels() >= 2;
 
@@ -732,8 +732,9 @@ auto testTrigDelay(settings s) -> int {
                 std::cout << "The number of data samples is not equal to the trigger delay\n";
                 std::cout << "Delay " << i << " samples " << sampWithData << "\n";
                 printBuffer(buffer,-2,sampWithData + 3);
+            }else{
+                if (s.showBuffer) printBuffer(buffer,-2,sampWithData + 3);
             }
-
             if (s.verbose || ret){
                 printTestResult(g_result,testName,ret == 0);
             }
@@ -890,6 +891,12 @@ int main(int argc, char **argv){
 
     if(rp_InitReset(false) != RP_OK){
         fprintf(stderr, "Rp api init failed!\n");
+        return 1;
+    }
+
+    int ret = rp_CalibInit();
+    if(ret != RP_HW_CALIB_OK){
+        fprintf(stderr, "Calib init error\n");
         return 1;
     }
 

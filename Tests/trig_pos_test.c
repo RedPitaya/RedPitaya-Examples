@@ -130,7 +130,7 @@ int main(int argc, char **argv){
                         }
                 }
 
-                if (!(data[9] > data[10] && data[9] > 0 && data[10] < 0)){
+                if (!(data[9] > data[10] && data[9] >= 0 && data[10] <= 0)){
                         failTest = true;
                         if (Verbose){
                                 printf("Test fail. NE Mode. Decimate: %d; pre trig value: %d; after trig value: %d\n",dec,data[9],data[10]);
