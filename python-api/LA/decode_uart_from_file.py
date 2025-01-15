@@ -48,18 +48,6 @@ print(obj.getDecoderSettings("UART"))
 # 	STOP_BITS_20 = 4
 # };
 
-# enum UARTAnnotations
-# {
-# 	PARITY_ERR		= 0,
-# 	START_BIT_ERR	= 1,
-# 	STOP_BIT_ERR	= 2,
-# 	DATA			= 3,
-# 	START_BIT		= 4,
-# 	STOP_BIT		= 5,
-# 	PARITY_BIT		= 6,
-# 	ENUM_END
-# };
-
 print("\nDecoded data\n")
 decode = obj.decode("UART")
 for index in range(len(decode)):
