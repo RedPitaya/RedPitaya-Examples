@@ -1,7 +1,7 @@
 
 /* @brief This is a simple application for testing SPI communication on a RedPitaya
  * @Author Luka Golinar <luka.golinar@redpitaya.com>
- * 
+ *
  * (c) Red Pitaya  http://www.redpitaya.com
  *
  * This part of code is written in C programming language.
@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include <unistd.h>	
+#include <unistd.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <errno.h>
@@ -63,22 +63,22 @@ int main(void){
 
 static int init_spi(){
 
-	/* MODES: mode |= SPI_LOOP; 
-	 *        mode |= SPI_CPHA; 
-	 *        mode |= SPI_CPOL; 
-	 *		  mode |= SPI_LSB_FIRST; 
-	 *        mode |= SPI_CS_HIGH; 
-	 *        mode |= SPI_3WIRE; 
-	 *        mode |= SPI_NO_CS; 
+	/* MODES: mode |= SPI_LOOP;
+	 *        mode |= SPI_CPHA;
+	 *        mode |= SPI_CPOL;
+	 *		  mode |= SPI_LSB_FIRST;
+	 *        mode |= SPI_CS_HIGH;
+	 *        mode |= SPI_3WIRE;
+	 *        mode |= SPI_NO_CS;
 	 *        mode |= SPI_READY;
 	 *
 	 * multiple possibilities possible using | */
 	uint8_t mode;
 
 	/* Opening file stream */
-	spi_fd = open("/dev/spidev1.0", O_RDWR | O_NOCTTY);
+	spi_fd = open("/dev/spidev2.0", O_RDWR | O_NOCTTY);
 	if(spi_fd < 0){
-		printf("Error opening spidev0.1. Error: %s\n", strerror(errno));
+		printf("Error opening spidev2.0. Error: %s\n", strerror(errno));
 		return -1;
 	}
 
@@ -115,29 +115,29 @@ static int read_flash_id(int fd){
 	/*struct spi_ioc_transfer {
           __u64           tx_buf;
           __u64           rx_buf;
-  
+
           __u32           len;
           __u32           speed_hz;
-  
+
           __u16           delay_usecs;
           __u8            bits_per_word;
           __u8            cs_change;
-          __u32           pad;  
+          __u32           pad;
     }*/
     /* If the contents of 'struct spi_ioc_transfer' ever change
 	 * incompatibly, then the ioctl number (currently 0) must change;
 	 * ioctls with constant size fields get a bit more in the way of
 	 * error checking than ones (like this) where that field varies.
 	 *
-	 * NOTE: struct layout is the same in 64bit and 32bit userspace.*/  
+	 * NOTE: struct layout is the same in 64bit and 32bit userspace.*/
 	struct spi_ioc_transfer xfer[size];
-    
+
     unsigned char           buf0[1];
     unsigned char           buf1[3];
 	int                     status;
-  	
+
  	memset(xfer, 0, sizeof xfer);
- 	
+
  	/* RDID command */
 	buf0[0] = 0x9f;
 	/* Some sample data */
@@ -165,12 +165,12 @@ static int read_flash_id(int fd){
 		perror("SPI_IOC_MESSAGE");
 		return -1;
 	}
-	
+
 	/* Print read buffer */
 	for(int i = 0; i < 3; i++){
 		printf("Buffer: %d\n", buf1[i]);
 	}
-	
+
 	return 0;
 }
 

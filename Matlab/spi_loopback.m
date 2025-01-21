@@ -8,7 +8,7 @@ tcpipObj=tcpip(IP, port);
 
 fopen(tcpipObj);
 tcpipObj.Terminator = 'CR/LF';
-fprintf(tcpipObj,'SPI:INIT:DEV "/dev/spidev1.0"');
+fprintf(tcpipObj,'SPI:INIT:DEV "/dev/spidev2.0"');
 
 fprintf(tcpipObj,'SPI:SET:DEF');           % set default settings
 
@@ -32,7 +32,7 @@ fprintf(tcpipObj,'SPI:SET:SET');           % apply setting to spi
 
 fprintf(tcpipObj,'SPI:MSG:CREATE 2');      % create 2 messages with diffrent buffers
 
-fprintf('Check message count %s\n', query(tcpipObj,'SPI:MSG:SIZE?')); 
+fprintf('Check message count %s\n', query(tcpipObj,'SPI:MSG:SIZE?'));
 
 fprintf(tcpipObj,'SPI:MSG0:TX4:RX 13,14,15,16');  % sets the first message to write and read buffers of 4 bytes
 

@@ -20,7 +20,7 @@ int main(int argc, char *argv[]){
     char rx_buf[255];
     memset(rx_buf,0,255);
 
-    int res = rp_SPI_InitDevice("/dev/spidev1.0"); // Init spi api.
+    int res = rp_SPI_InitDevice("/dev/spidev2.0"); // Init spi api.
     printf("Init result: %d\n",res);
 
     res = rp_SPI_SetDefaultSettings(); // Set default settings.
