@@ -1025,9 +1025,9 @@ class scpi (object):
         """Reset Command"""
         return self.tx_txt('*RST')
 
-    def sre(self):
+    def sre(self, value: int):
         """Service Request Enable Command"""
-        return self.tx_txt('*SRE')
+        return self.tx_txt('*SRE {value}')
 
     def sre_q(self):
         """Service Request Enable Query"""
