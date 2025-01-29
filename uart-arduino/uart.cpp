@@ -111,8 +111,10 @@ auto UARTProtocol::readFrom(int fd, uint8_t *buffer, size_t size) -> size_t{
     while(pos < size){
         uint8_t ret = readBlock(fd, buffer + pos, receiveSize, first);
         if (ret != receiveSize){
+            fprintf(stderr,"Exit\n");
             return 0;
         }
+        printf("Tick\n");
         first = false;
         pos += ret;
         receiveSize = size - pos > 8 ? 8 : size - pos;
@@ -130,7 +132,7 @@ auto UARTProtocol::readBlock(int fd, uint8_t *buffer, size_t size, bool first) -
     uint8_t readSize = (header & 0x07) + 1;
     if (first != (bool)(header & 0x8)){
         tcflush(fd, TCIFLUSH);
-        fprintf(stderr,"Error block order 0x%X order %d\n", header, first);
+        fprintf(stderr,"Error block order 0x%X order 0x%X\n", header, first);
         return 0;
     }
     if (readSize > size){
@@ -178,7 +180,7 @@ auto UARTProtocol::writeTo(int fd, uint8_t *buffer, size_t size) -> size_t{
         pos += sendSize;
         sendSize = pos + sendSize < size ? sendSize : size - pos;
     }
-    return 0;
+    return size;
 }
 
 auto UARTProtocol::getHeaderForBlock(uint8_t *buffer, uint8_t size, bool firstBlock) -> uint8_t{
@@ -285,21 +287,22 @@ int main(int argc, char *argv[]){
         memset(buffer,0,B_SIZE);
         printf("Begin read\n");
         auto ret = p.readFrom(uart_fd,buffer,B_SIZE);
+        printf("Read size %d\n",ret);
         if (ret == B_SIZE){
-            printf("End read\n");
-            for(int i = 0 ; i < B_SIZE; i++){
-                printf("%d,",buffer[i]);
-            }
-            printf("\n");
-            for(int i = 0 ; i < B_SIZE; i++){
-                buffer[i] = i * 2;
-            }
-            printf("Begin write\n");
-            p.writeTo(uart_fd,buffer,B_SIZE);
-            printf("End write\n");
-        }else{
-            printf("Error read\n");
-        }
+             printf("End read\n");
+             for(int i = 0 ; i < B_SIZE; i++){
+                 printf("%d,",buffer[i]);
+             }
+             printf("\n");
+             for(int i = 0 ; i < B_SIZE; i++){
+                 buffer[i] = i * 2;
+             }
+             printf("Begin write\n");
+             p.writeTo(uart_fd,buffer,B_SIZE);
+             printf("End write\n");
+         }else{
+             printf("Error read\n");
+         }
         sleep(2);
     }
 

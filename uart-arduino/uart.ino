@@ -118,7 +118,7 @@ auto UARTProtocol::write(SoftwareSerial *uart, uint8_t *buffer, size_t size) -> 
         sendSize = pos + sendSize < size ? sendSize : size - pos;
     }
 
-    return 0;
+    return size;
 }
 
 auto UARTProtocol::getHeaderForBlock(uint8_t *buffer, uint8_t size, bool firstBlock) -> uint8_t{
