@@ -13,7 +13,7 @@
 #include <string.h>
 #include <unistd.h>
 #include "rp_hw.h"
-#include "rp_hw-calib.h"
+#include "rp_hw_calib.h"
 
 
 int main(int argc, char *argv[]){
