@@ -1,4 +1,4 @@
-CFLAGS  = -std=gnu11 -Wall ## -Werror
+CFLAGS  = -Wall ## -Werror
 CFLAGS += -I/opt/redpitaya/include
 LDFLAGS = -L/opt/redpitaya/lib
 LDLIBS = -static -lrp-hw-can -lrp -lrp-hw-calib -lrp-hw-profiles
@@ -44,12 +44,13 @@ PRGS += acquire_4ch_trigger_software
 PRGS += i2c_switch_max7311
 
 OBJS := $(patsubst %,%.o,$(PRGS))
-SRC := $(patsubst %,%.c,$(PRGS))
+SRC := $(patsubst %,%.cpp,$(PRGS))
+
 
 all: $(PRGS)
 
-$(PRGS): %: %.c
-	$(CC) $< $(CFLAGS) $(LDFLAGS) $(LDLIBS) -o $@
+$(PRGS): %: %.cpp
+	$(CXX) $< $(CFLAGS) $(LDFLAGS) $(LDLIBS) -o $@
 
 clean:
 	$(RM) *.o
