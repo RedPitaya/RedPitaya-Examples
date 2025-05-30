@@ -15,12 +15,20 @@ int main(int argc, char **argv) {
     dsize = atoi(argv[1]);
     dec = atoi(argv[2]);
   }
-
   /* Print error, if rp_Init() function failed */
   if (rp_InitReset(false) != RP_OK) {
     fprintf(stderr, "Rp api init failed!\n");
     return -1;
   }
+
+  /*
+  If the API reset is not performed during initialization, then you need to
+  apply calibration in the FPGA. This method only works for calibration
+  parameters starting with version 6. See the values ​​in the console
+  application "calib -u"
+  */
+  rp_AcqSetCalibInFPGA(RP_CH_1);
+  rp_AcqSetCalibInFPGA(RP_CH_2);
 
   uint32_t g_adc_axi_start, g_adc_axi_size;
   rp_AcqAxiGetMemoryRegion(&g_adc_axi_start, &g_adc_axi_size);
@@ -66,7 +74,7 @@ int main(int argc, char **argv) {
     return -1;
   }
 
-  rp_AcqSetTriggerSrc(RP_TRIG_SRC_CHA_PE);
+  rp_AcqSetTriggerSrc(RP_TRIG_SRC_NOW);
   rp_acq_trig_state_t state = RP_TRIG_STATE_TRIGGERED;
 
   while (1) {

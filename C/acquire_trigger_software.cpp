@@ -13,6 +13,14 @@ int main(int argc, char **argv) {
     fprintf(stderr, "Rp api init failed!\n");
   }
 
+  /*
+If the API reset is not performed during initialization, then you need to
+apply calibration in the FPGA. This method only works for calibration
+parameters starting with version 6. See the values ​​in the console
+application "calib -u"
+*/
+  rp_AcqSetCalibInFPGA(RP_CH_1);
+
   /*LOOB BACK FROM OUTPUT 2 - ONLY FOR TESTING*/
   rp_EnableDebugReg();
   rp_GenReset();
