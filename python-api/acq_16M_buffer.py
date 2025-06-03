@@ -58,16 +58,31 @@ while 1:
 
 print("ACQ get data")
 tp=rp.rp_AcqAxiGetWritePointerAtTrig(rp.RP_CH_1)[1]
+
 # Get data
 # RAW
+# Fills the passed buffer with data
 arr_i16 = np.zeros(samples, dtype=np.int16)
 arr_f = np.zeros(samples, dtype=np.float32)
 start = time.time()
 res = rp.rp_AcqAxiGetDataRawNP(rp.RP_CH_1,tp, arr_i16)
 end = time.time()
+
 # Volts
+# Fills the passed buffer with data
 res = rp.rp_AcqAxiGetDataVNP(rp.RP_CH_1,tp, arr_f)
 end2 = time.time()
+
+# Returns a memory region without copying data.
+res = rp.rp_AcqAxiGetDataRawDirect(rp.RP_CH_1,tp, samples)
+end3 = time.time()
+
+arrays = []
+for span in res[1]:
+    arr = np.frombuffer(span, dtype=np.int16)
+    arrays.append(arr)
+
 print("Time =",end - start, " Data = ", arr_i16)
 print("Time =",end2 - end, " Data = ", arr_f)
+print("Time =",end3 - end2, " Data = ", arrays)
 

@@ -1,4 +1,4 @@
-CFLAGS  = -Wall ## -Werror
+CFLAGS  = -Wall -std=c++20 ## -Werror
 CFLAGS += -I/opt/redpitaya/include
 LDFLAGS = -L/opt/redpitaya/lib
 LDLIBS = -static -lrp-hw-can -lrp -lrp-hw-calib -lrp-hw-profiles
@@ -23,9 +23,9 @@ PRGS =  analog_inputs \
 		uart_loopback \
 		can_pass \
 		can_loopback \
-		calibration_api
-
-PRGS += acquire_trigger_software \
+		calibration_api \
+		axi_without_copy \
+		acquire_trigger_software \
 		acquire_trigger_posedge \
 		acquire_signal_check \
 		generate_arbitrary_waveform \
