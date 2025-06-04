@@ -37,7 +37,8 @@ PRGS =  analog_inputs \
 		axi \
 		axi_4ch \
 		generate_continuous_dma \
-		generate_dma_burst
+		generate_dma_burst \
+		acquire_split_trigger
 
 PRGS += i2c_eeprom_read_calib
 PRGS += acquire_4ch_trigger_software
