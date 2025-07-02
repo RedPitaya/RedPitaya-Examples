@@ -22,7 +22,7 @@ application "calib -u"
   rp_AcqSetCalibInFPGA(RP_CH_1);
 
   /*LOOB BACK FROM OUTPUT 2 - ONLY FOR TESTING*/
-  rp_EnableDebugReg();
+//  rp_EnableDebugReg();
   rp_GenReset();
   rp_GenFreq(RP_CH_1, 1000.0);
   rp_GenAmp(RP_CH_1, 1.0);
