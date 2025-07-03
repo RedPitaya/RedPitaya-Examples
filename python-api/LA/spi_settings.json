@@ -1,13 +1,13 @@
 {
 	"acq_speed" : 0,
-	"bit_order" : 0,
-	"clk" : 1,
+	"bit_order" : "MsbFirst",
+	"clk" : "DIN0",
 	"cpha" : 0,
 	"cpol" : 0,
-	"cs" : 3,
-	"cs_polarity" : 0,
-	"invert_bit" : 0,
-	"miso" : 0,
-	"mosi" : 2,
+	"cs" : "DIN2",
+	"cs_polarity" : "ActiveLow",
+	"invert_bit" : "No",
+	"miso" : "None",
+	"mosi" : "DIN1",
 	"word_size" : 8
 }
