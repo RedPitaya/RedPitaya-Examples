@@ -139,12 +139,6 @@ The combination of CPOL and CPHA defines the SPI mode:
 
 **UART settings**
 
-Here's the consolidated README for UART configuration in a continuous text format:
-
----
-
-**README - UART Configuration Parameters Guide**
-
 **Configuration:**
 ```json
 {
