@@ -5,7 +5,8 @@ import struct
 import numpy as np
 
 __author__ = "Luka Golinar, Iztok Jeras, Miha Gjura"
-__copyright__ = "Copyright 2023, Red Pitaya"
+__copyright__ = "Copyright 2025, Red Pitaya"
+__OS_version__ = "2.05-37"
 
 class scpi (object):
     """SCPI class used to access Red Pitaya over an IP network."""
