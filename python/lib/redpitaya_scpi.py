@@ -9,6 +9,7 @@ import numpy as np
 
 __author__ = "Luka Golinar, Iztok Jeras, Miha Gjura"
 __copyright__ = "Copyright 2025, Red Pitaya"
+__OS_version__ = "IN DEV"
 
 
 class Waveform(Enum):
