@@ -5,7 +5,7 @@ import struct
 import numpy as np
 
 __author__ = "Luka Golinar, Iztok Jeras, Miha Gjura"
-__copyright__ = "Copyright 2023, Red Pitaya"
+__copyright__ = "Copyright 2025, Red Pitaya"
 
 class scpi (object):
     """SCPI class used to access Red Pitaya over an IP network."""
@@ -13,7 +13,7 @@ class scpi (object):
 
     def __init__(self, host, timeout=None, port=5000):
         """Initialize object and open IP connection.
-        Host IP should be a string in parentheses, like '192.168.1.100'.
+        Host IP should be a string in parentheses, like '192.168.1.100' or 'rp-xxxxxx.local'.
         """
         self.host    = host
         self.port    = port
@@ -48,7 +48,9 @@ class scpi (object):
             if (len(msg) >= 2 and msg[-2:] == self.delimiter):
                 return msg[:-2]
 
-    def rx_txt_check_error(self, chunksize = 4096,stop = True):
+    def rx_txt_check_error(self, chunksize = 4096, stop = True):
+        """Receive text string and return it after removing the delimiter.
+        Check for error."""
         msg = self.rx_txt(chunksize)
         self.check_error(stop)
         return msg
@@ -78,18 +80,22 @@ class scpi (object):
         while len(data) < numOfBytes:
             r_size = min(numOfBytes - len(data),4096)
             data += (self._socket.recv(r_size))
-        return data
 
-    def rx_arb_check_error(self,stop = True):
+        self._socket.recv(2)        # recive \r\n
+        return data    
+    
+    def rx_arb_check_error(self, stop = True):
+        """ Recieve binary data from scpi server. Check for error."""
         data = self.rx_arb()
         self.check_error(stop)
         return data
-
+    
     def tx_txt(self, msg):
         """Send text string ending and append delimiter."""
         return self._socket.sendall((msg + self.delimiter).encode('utf-8')) # was send(().encode('utf-8'))
 
-    def tx_txt_check_error(self, msg,stop = True):
+    def tx_txt_check_error(self, msg, stop = True):
+        """Send text string ending and append delimiter. Check for error."""
         self.tx_txt(msg)
         self.check_error(stop)
 
@@ -98,7 +104,8 @@ class scpi (object):
         self.tx_txt(msg)
         return self.rx_txt()
 
-    def check_error(self,stop = True):
+    def check_error(self, stop = True):
+        """Read error from Red Pitaya and print it."""
         res = int(self.stb_q())
         if (res & 0x4):
             while 1:
