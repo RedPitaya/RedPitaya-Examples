@@ -5,7 +5,7 @@ import struct
 
 __author__ = "Luka Golinar, Iztok Jeras, Miha Gjura"
 __copyright__ = "Copyright 2025, Red Pitaya"
-__OS_version__ = "2.00 and above"            # Most likely to work with older OS versions.
+__OS_version__ = "2.00 and above"            # The core file should be compatible even with older OS versions.
 
 class scpi (object):
     """SCPI class used to access Red Pitaya over an IP network."""
