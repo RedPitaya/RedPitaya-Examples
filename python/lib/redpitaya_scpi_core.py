@@ -13,7 +13,7 @@ class scpi (object):
 
     def __init__(self, host, timeout=None, port=5000):
         """Initialize object and open IP connection.
-        Host IP should be a string in parentheses, like '192.168.1.100'.
+        Host IP should be a string in parentheses, like '192.168.1.100' or 'rp-xxxxxx.local'.
         """
         self.host    = host
         self.port    = port
