@@ -120,7 +120,7 @@ class scpi (object):
         """Clear Status Command"""
         return self.tx_txt('*CLS')
 
-    def ese(self, value: int):
+    def ese(self, value):
         """Standard Event Status Enable Command"""
         return self.tx_txt(f'*ESE {value}')
 
@@ -148,9 +148,9 @@ class scpi (object):
         """Reset Command"""
         return self.tx_txt('*RST')
 
-    def sre(self, value: int):
+    def sre(self):
         """Service Request Enable Command"""
-        return self.tx_txt('*SRE {value}')
+        return self.tx_txt('*SRE')
 
     def sre_q(self):
         """Service Request Enable Query"""
