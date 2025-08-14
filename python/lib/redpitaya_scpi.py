@@ -1993,7 +1993,7 @@ class scpi (object):
 
     def sre(self, value: int):
         """Service Request Enable Command"""
-        return self.tx_txt('*SRE {value}')
+        return self.tx_txt(f'*SRE {value}')
 
     def sre_q(self):
         """Service Request Enable Query"""
