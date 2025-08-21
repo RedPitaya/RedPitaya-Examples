@@ -76,7 +76,7 @@ class scpi (object):
         data=b''
 
         while len(data) < numOfBytes:
-            r_size = min(numOfBytes - len(data),4096)
+            r_size = min(numOfBytes - len(data),4096 * 1024)
             data += (self._socket.recv(r_size))
 
         self._socket.recv(2) # recive \r\n
