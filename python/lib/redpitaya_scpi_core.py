@@ -5,7 +5,7 @@ import struct
 
 __author__ = "Luka Golinar, Iztok Jeras, Miha Gjura"
 __copyright__ = "Copyright 2025, Red Pitaya"
-__OS_version__ = "2.00 and above"            # Most likely to work with older OS versions.
+__OS_version__ = "2.00 and above"            # The core file should be compatible even with older OS versions.
 
 class scpi (object):
     """SCPI class used to access Red Pitaya over an IP network."""
@@ -13,7 +13,7 @@ class scpi (object):
 
     def __init__(self, host, timeout=None, port=5000):
         """Initialize object and open IP connection.
-        Host IP should be a string in parentheses, like '192.168.1.100'.
+        Host IP should be a string in parentheses, like '192.168.1.100' or 'rp-xxxxxx.local'.
         """
         self.host    = host
         self.port    = port
@@ -120,7 +120,7 @@ class scpi (object):
         """Clear Status Command"""
         return self.tx_txt('*CLS')
 
-    def ese(self, value: int):
+    def ese(self, value):
         """Standard Event Status Enable Command"""
         return self.tx_txt(f'*ESE {value}')
 
@@ -148,9 +148,9 @@ class scpi (object):
         """Reset Command"""
         return self.tx_txt('*RST')
 
-    def sre(self, value: int):
+    def sre(self):
         """Service Request Enable Command"""
-        return self.tx_txt('*SRE {value}')
+        return self.tx_txt('*SRE')
 
     def sre_q(self):
         """Service Request Enable Query"""
