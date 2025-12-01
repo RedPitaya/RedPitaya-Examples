@@ -6,7 +6,7 @@ import redpitaya_scpi as scpi
 
 rp_s = scpi.scpi(sys.argv[1])
 
-rp_s.tx_txt('SPI:INIT:DEV "/dev/spidev1.0"')
+rp_s.tx_txt('SPI:INIT:DEV "/dev/spidev2.0"')
 print("Init SPI")
 
 rp_s.tx_txt('SPI:SET:DEF')

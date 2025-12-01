@@ -1,0 +1,11 @@
+{
+	"acq_speed" : 1000000,
+	"baudrate" : 115200,
+	"bitOrder" : "LsbFirst",
+	"invert" : "No",
+	"num_data_bits" : "Bits8",
+	"num_stop_bits" : "Stop_Bit_10",
+	"parity" : "None",
+	"rx" : "DIN0",
+	"tx" : "None"
+}

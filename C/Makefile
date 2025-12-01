@@ -1,4 +1,4 @@
-CFLAGS  = -std=gnu11 -Wall ## -Werror
+CFLAGS  = -Wall -std=c++20 ## -Werror
 CFLAGS += -I/opt/redpitaya/include
 LDFLAGS = -L/opt/redpitaya/lib
 LDLIBS = -static -lrp-hw-can -lrp -lrp-hw-calib -lrp-hw-profiles
@@ -23,9 +23,9 @@ PRGS =  analog_inputs \
 		uart_loopback \
 		can_pass \
 		can_loopback \
-		calibration_api
-
-PRGS += acquire_trigger_software \
+		calibration_api \
+		axi_without_copy \
+		acquire_trigger_software \
 		acquire_trigger_posedge \
 		acquire_signal_check \
 		generate_arbitrary_waveform \
@@ -37,19 +37,21 @@ PRGS += acquire_trigger_software \
 		axi \
 		axi_4ch \
 		generate_continuous_dma \
-		generate_dma_burst
+		generate_dma_burst \
+		acquire_split_trigger
 
 PRGS += i2c_eeprom_read_calib
 PRGS += acquire_4ch_trigger_software
 PRGS += i2c_switch_max7311
 
 OBJS := $(patsubst %,%.o,$(PRGS))
-SRC := $(patsubst %,%.c,$(PRGS))
+SRC := $(patsubst %,%.cpp,$(PRGS))
+
 
 all: $(PRGS)
 
-$(PRGS): %: %.c
-	$(CC) $< $(CFLAGS) $(LDFLAGS) $(LDLIBS) -o $@
+$(PRGS): %: %.cpp
+	$(CXX) $< $(CFLAGS) $(LDFLAGS) $(LDLIBS) -o $@
 
 clean:
 	$(RM) *.o
