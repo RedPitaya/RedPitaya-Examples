@@ -78,7 +78,7 @@ int main(int argc, char *argv[]) {
   if (rx_buffer)
     printf("Read message: %s (res %d)\n", rx_buffer, res);
 
-  res = rp_SPI_DestoryMessage();
+  res = rp_SPI_DestroyMessage();
 
   res = rp_SPI_Release(); // Close spi api.
   printf("UnInit result: %d\n", res);
