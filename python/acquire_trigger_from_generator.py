@@ -2,15 +2,19 @@
 
 import sys
 import time
-import redpitaya_scpi as scpi
+import os
 import matplotlib.pyplot as plot
+
+sys.path.append(os.path.join(os.path.dirname(__file__), 'lib'))
+import redpitaya_scpi as scpi
+
 
 rp_s = scpi.scpi(sys.argv[1])
 
 rp_s.tx_txt('GEN:RST')
 rp_s.tx_txt('ACQ:RST')
 
-rp_s.tx_txt('SOUR1:FUNC SINE');                                                 
+rp_s.tx_txt('SOUR1:FUNC SINE');
 rp_s.tx_txt('SOUR1:FREQ:FIX 1000');
 rp_s.tx_txt('SOUR1:VOLT 1');
 
@@ -36,7 +40,7 @@ while 1:
 while 1:
     rp_s.tx_txt('ACQ:TRIG:FILL?')
     if rp_s.rx_txt() == '1':
-        break    
+        break
 
 rp_s.tx_txt('ACQ:SOUR1:DATA?')
 buff_string = rp_s.rx_txt()
