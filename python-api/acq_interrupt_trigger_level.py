@@ -22,6 +22,7 @@ trig_dly = 0
 
 acq_trig_sour = rp.RP_TRIG_SRC_CHA_PE
 N = 128
+
 rp.rp_GenReset()
 rp.rp_AcqReset()
 
@@ -60,18 +61,9 @@ time.sleep(0.1)
 rp.rp_AcqSetTriggerSrc(acq_trig_sour)
 time.sleep(0.1)
 
-rp.rp_GenTriggerOnly(channel)       # Trigger generator
+rp.rp_AcqIntTriggerRead(1000) # 1000 mS timeout
 
-# Trigger state
-while 1:
-    trig_state = rp.rp_AcqGetTriggerState()[1]
-    if trig_state == rp.RP_TRIG_STATE_TRIGGERED:
-        break
-
-# Fill state
-while 1:
-    if rp.rp_AcqGetBufferFillState()[1]:
-        break
+rp.rp_AcqIntFillRead(1000) # 1000 mS timeout
 
 print("ACQ get data")
 tp=rp.rp_AcqGetWritePointerAtTrig()[1]

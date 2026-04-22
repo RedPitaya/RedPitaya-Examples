@@ -44,16 +44,9 @@ time.sleep(0.1)
 rp.rp_AcqSetTriggerSrc(rp.RP_TRIG_SRC_NOW)
 time.sleep(0.1)
 
-# Trigger state
-while 1:
-    trig_state = rp.rp_AcqGetTriggerState()[1]
-    if trig_state == rp.RP_TRIG_STATE_TRIGGERED:
-        break
+rp.rp_AcqIntTriggerRead(1000) # 1000 mS timeout
 
-# Fill state
-while 1:
-    if rp.rp_AcqAxiGetBufferFillState(rp.RP_CH_1)[1]:
-        break
+rp.rp_AcqIntFillRead(1000) # 1000 mS timeout
 
 print("ACQ get data")
 tp=rp.rp_AcqAxiGetWritePointerAtTrig(rp.RP_CH_1)[1]

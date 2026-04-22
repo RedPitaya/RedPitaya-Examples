@@ -45,6 +45,7 @@ int main(int argc, char **argv) {
   for (int i = 0; i < ch_num; i++) {
     buff[i] = (float *)malloc(buff_size * sizeof(float));
   }
+
   rp_AcqReset();
   rp_AcqSetSplitTrigger(true); // Enable split trigger mode
 
@@ -59,13 +60,15 @@ int main(int argc, char **argv) {
     rp_AcqSetTriggerSrcCh(ch[i], trig_src[i]); // Set channel trigger source
   }
 
+  // for (int i = 0; i < ch_num; i++) {
+  //   rp_AcqSetTriggerSrcCh(ch[i], trig_src[i]); // Set channel trigger source
+  // }
+
   /* Wait for trigger and buffer full */
   for (int i = 0; i < ch_num; i++) {
-    bool fillState = false;
-    while (!fillState) {
-      rp_AcqGetBufferFillStateCh(ch[trig_ord[i] - 1], &fillState);
-    }
-    std::cout << "Channel " << trig_ord[i] << " data acquired" << std::endl;
+    auto ret = rp_AcqIntFillReadCh(ch[i], 3000);
+    std::cout << "Channel " << trig_ord[i] << " data acquired ret = " << ret
+              << std::endl;
   }
 
   /* Get data */
