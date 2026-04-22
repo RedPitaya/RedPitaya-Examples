@@ -20,12 +20,13 @@ int main(int argc, char **argv) {
   int ch_num = rp_HPGetFastADCChannelsCountOrDefault();
   rp_channel_t ch[MAX_NUM] = {RP_CH_1, RP_CH_2, RP_CH_3, RP_CH_4};
   rp_channel_trigger_t ch_trig[MAX_NUM] = {RP_T_CH_1, RP_T_CH_2, RP_T_CH_3,
-                                          RP_T_CH_4};
+                                           RP_T_CH_4};
   uint32_t decimation[MAX_NUM] = {64, 64, 64, 64};
   float trig_lvl[MAX_NUM] = {0.1, 0.1, 0.1, 0.1};
   int trig_dly[MAX_NUM] = {0, 0, 0, 0};
   rp_acq_trig_src_t trig_src[MAX_NUM] = {RP_TRIG_SRC_CHA_PE, RP_TRIG_SRC_CHB_PE,
-                                        RP_TRIG_SRC_CHC_NE, RP_TRIG_SRC_CHD_NE};
+                                         RP_TRIG_SRC_CHC_NE,
+                                         RP_TRIG_SRC_CHD_NE};
   uint32_t acq_trig_pos[MAX_NUM] = {0, 0, 0, 0};
   int trig_ord[MAX_NUM] = {1, 2, 3, 4};
 
@@ -61,11 +62,9 @@ int main(int argc, char **argv) {
 
   /* Wait for trigger and buffer full */
   for (int i = 0; i < ch_num; i++) {
-    bool fillState = false;
-    while (!fillState) {
-      rp_AcqGetBufferFillStateCh(ch[trig_ord[i] - 1], &fillState);
-    }
-    std::cout << "Channel " << trig_ord[i] << " data acquired" << std::endl;
+    auto ret = rp_AcqIntFillReadCh(ch[i], 3000);
+    std::cout << "Channel " << trig_ord[i] << " data acquired ret = " << ret
+              << std::endl;
   }
 
   /* Get data */
