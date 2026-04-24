@@ -35,9 +35,14 @@ int main(int argc, char **argv) {
   for (int i = 0; i < ch_num; i++)
     std::cout << trig_ord[i] << " ";
   std::cout << std::endl;
-
+  // rp_EnableDebugReg();
   if (rp_InitReset(false) != RP_OK) {
     std::cerr << "Rp api init failed!" << std::endl;
+  }
+
+  if (rp_CalibInit() != RP_HW_CALIB_OK) {
+    fprintf(stderr, "Error init calibration\n");
+    return -1;
   }
 
   /* Reserve space for data */

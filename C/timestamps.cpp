@@ -38,6 +38,7 @@ void generator_thread() {
 }
 
 void acquisition_thread() {
+  // rp_EnableDebugReg();
   rp_AcqReset();
   rp_AcqSetDecimation(RP_DEC_1024);
   rp_AcqSetTriggerDelay(0);
@@ -50,7 +51,7 @@ void acquisition_thread() {
   rp_AcqStart();
   while (running) {
     rp_AcqSetTriggerSrc(RP_TRIG_SRC_CHA_PE);
-    int result = rp_AcqIntTriggerRead(2000);
+    int result = rp_AcqIntTriggerRead(3000);
     if (!running)
       break;
 
