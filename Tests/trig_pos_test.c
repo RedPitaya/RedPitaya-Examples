@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <string.h>
 #include "rp.h"
+#include "rp_hw_calib.h"
 
 #define DATA_SIZE 20
 #define OFFSET 10
@@ -34,6 +35,10 @@ int main(int argc, char **argv){
                 fprintf(stderr, "Rp api init failed!\n");
         }
 
+        if (rp_CalibInit() != RP_HW_CALIB_OK) {
+                fprintf(stderr, "Error init calibration\n");
+                return -1;
+        }
 
         for(int dec = 1; dec < 512; dec *= 2){
                 rp_AcqReset();

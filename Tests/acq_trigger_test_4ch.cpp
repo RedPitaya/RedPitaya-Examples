@@ -1234,6 +1234,11 @@ int main(int argc, char **argv) {
     return 1;
   }
 
+  if (rp_CalibInit() != RP_HW_CALIB_OK) {
+    fprintf(stderr, "Error init calibration\n");
+    return -1;
+  }
+
   rp_AcqSetSplitTrigger(false);
 
   g_result.clear();

@@ -2,6 +2,7 @@
  * This application acquires a signal on a specific channel */
 
 #include "rp.h"
+#include "rp_hw_calib.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -12,6 +13,11 @@ int main(int argc, char **argv) {
   /* Print error, if rp_Init() function failed */
   if (rp_InitReset(false) != RP_OK) {
     fprintf(stderr, "Rp api init failed!\n");
+    return -1;
+  }
+
+  if (rp_CalibInit() != RP_HW_CALIB_OK) {
+    fprintf(stderr, "Error init calibration\n");
     return -1;
   }
 

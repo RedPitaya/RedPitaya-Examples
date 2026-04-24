@@ -3,6 +3,7 @@
 
 #include "rp.h"
 #include "rp_hw-profiles.h"
+#include "rp_hw_calib.h"
 #include <algorithm>
 #include <chrono>
 #include <iostream>
@@ -37,6 +38,11 @@ int main(int argc, char **argv) {
 
   if (rp_InitReset(false) != RP_OK) {
     std::cerr << "Rp api init failed!" << std::endl;
+  }
+
+  if (rp_CalibInit() != RP_HW_CALIB_OK) {
+    fprintf(stderr, "Error init calibration\n");
+    return -1;
   }
 
   /* Reserve space for data */

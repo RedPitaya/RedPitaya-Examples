@@ -3,6 +3,7 @@
 
 #include "common/profiler.h"
 #include "rp.h"
+#include "rp_hw_calib.h"
 #include <span>
 #include <stdio.h>
 #include <stdlib.h>
