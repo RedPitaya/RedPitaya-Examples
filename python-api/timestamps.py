@@ -45,7 +45,7 @@ def generator_thread():
 def acquisition_thread():
     """Acquisition thread - measures time between triggers"""
     print("Acquisition thread started")
-    # rp.rp_EnableDebugReg()
+#    rp.rp_EnableDebugReg()
 
     # Reset and configure acquisition
     rp.rp_AcqReset()
@@ -56,16 +56,17 @@ def acquisition_thread():
 
     prev_timestamp = 0
 
-    # Start acquisition
-    rp.rp_AcqStart()
 
     global running
     while running:
+        # Start acquisition
+        rp.rp_AcqStart()
+
         # Set trigger source to channel 1 positive edge
         rp.rp_AcqSetTriggerSrc(rp.RP_TRIG_SRC_CHA_PE)
 
-        # Wait for trigger with 2000 ms timeout
-        result = rp.rp_AcqIntTriggerRead(2000)
+        # Wait for trigger with 3000 ms timeout
+        result = rp.rp_AcqIntTriggerRead(4000)
 
         if not running:
             break
@@ -82,8 +83,6 @@ def acquisition_thread():
                     print("First trigger detected")
 
                 prev_timestamp = cur_timestamp
-                time.sleep(0.1)  # Small delay before next trigger
-                rp.rp_AcqUnlockTrigger()
             else:
                 print(f"Error getting timestamp: {rp.rp_GetError(ret)}")
                 break
@@ -93,15 +92,16 @@ def acquisition_thread():
         else:
             print(f"Error: {rp.rp_GetError(result)}", file=sys.stderr)
             break
+        time.sleep(0.1)
 
     rp.rp_AcqStop()
     print("Acquisition thread stopped")
 
 def main():
+
     fpga = overlay()
 
     global running
-
     # Setup signal handler for Ctrl+C
     signal.signal(signal.SIGINT, signal_handler)
 

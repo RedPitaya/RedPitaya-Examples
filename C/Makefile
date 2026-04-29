@@ -41,7 +41,9 @@ PRGS =  analog_inputs \
 		acquire_split_trigger \
 		acquire_interrupt_split_trigger \
 		acquire_interrupt_trigger_software \
-		timestamps
+		timestamps \
+		acquire_trigger_software_in_loop \
+		acquire_trigger_software_keep_arm_in_loop
 
 PRGS += i2c_eeprom_read_calib
 PRGS += acquire_4ch_trigger_software

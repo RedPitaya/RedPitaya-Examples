@@ -48,8 +48,8 @@ void acquisition_thread() {
   uint64_t prev_timestamp = 0;
   uint64_t cur_timestamp = 0;
 
-  rp_AcqStart();
   while (running) {
+    rp_AcqStart();
     rp_AcqSetTriggerSrc(RP_TRIG_SRC_CHA_PE);
     int result = rp_AcqIntTriggerRead(3000);
     if (!running)
@@ -67,7 +67,6 @@ void acquisition_thread() {
       }
       prev_timestamp = cur_timestamp;
       std::this_thread::sleep_for(std::chrono::milliseconds(100));
-      rp_AcqUnlockTrigger();
     } else if (result == RP_ETIM) {
       std::cerr << "Timeout" << std::endl;
     } else {
