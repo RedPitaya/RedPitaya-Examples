@@ -57,6 +57,8 @@ int main(int argc, char **argv) {
 
   /* Configure acquisition settings for each channel */
   for (int i = 0; i < ch_num; i++) {
+    rp_AcqSetIntMaskCh(ch[i], RP_INT_TRIGGER,
+                       false); // Disables interrupts for trigger point.
     rp_AcqResetCh(ch[i]);
     rp_AcqSetDecimationFactorCh(ch[i], decimation[i]); // Decimation factor
     rp_AcqSetGain(ch[i], RP_LOW);

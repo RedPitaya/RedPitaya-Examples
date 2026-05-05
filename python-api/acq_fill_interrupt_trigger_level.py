@@ -57,9 +57,7 @@ rp.rp_AcqSetDecimation(rp.RP_DEC_1)
 rp.rp_AcqSetTriggerLevel(rp.RP_T_CH_1, trig_lvl)
 rp.rp_AcqSetTriggerDelay(trig_dly)
 rp.rp_AcqSetIntMask(rp.RP_INT_TRIGGER,False)
-# rp.rp_AcqSetIntMask(rp.RP_INT_FILL,False)
 print(rp.rp_AcqGetIntMask(rp.RP_INT_TRIGGER))
-print(rp.rp_AcqGetIntMask(rp.RP_INT_FILL))
 
 # Start Acquisition
 print("Acq_start")
@@ -69,7 +67,8 @@ time.sleep(0.1)
 rp.rp_AcqSetTriggerSrc(acq_trig_sour)
 time.sleep(0.1)
 
-print(rp.rp_AcqIntTriggerRead(1000)) # 1000 mS timeout
+# No interrupt is required as it is disabled.
+# print(rp.rp_AcqIntTriggerRead(1000)) # 1000 mS timeout
 
 print(rp.rp_AcqIntFillRead(1000)) # 1000 mS timeout
 
@@ -77,11 +76,8 @@ print("ACQ get data")
 tp=rp.rp_AcqGetWritePointerAtTrig()[1]
 # Get data
 # RAW
-arr_i16 = np.zeros(N, dtype=np.int16)
 arr_f = np.zeros(N, dtype=np.float32)
-res = rp.rp_AcqGetDataRawNP(rp.RP_CH_1,tp, arr_i16)
 # Volts
 res = rp.rp_AcqGetDataVNP(rp.RP_CH_1,tp, arr_f)
-print(arr_i16)
 print(arr_f)
 

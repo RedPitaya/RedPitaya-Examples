@@ -49,7 +49,7 @@ def main():
     # Start acquisition once (keeps running due to Keep Arm)
     rp_s.tx_txt('ACQ:START')
     print("Acquisition started in Keep Arm mode\n")
-
+    print(rp_s.txrx_txt('ACQ:KEEP:ARM?'))
     # Number of acquisition cycles
     count = 10
 

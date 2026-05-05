@@ -62,6 +62,7 @@ def main():
 
     # Configure acquisition settings for each channel
     for i in range(ch_num):
+        rp.rp_AcqSetIntMaskCh(channels[i],rp.RP_INT_TRIGGER,False)
         rp.rp_AcqResetCh(channels[i])
         rp.rp_AcqSetDecimationFactorCh(channels[i], decimation[i])
         rp.rp_AcqSetGain(channels[i], rp.RP_LOW)

@@ -9,8 +9,8 @@ sys.path.append(os.path.join(os.path.dirname(__file__), 'lib'))
 import redpitaya_scpi as scpi
 
 
-rp_s = scpi.scpi("127.0.0.1")
-rp_s.tx_txt('RP:LOG CONSOLE')
+rp_s = scpi.scpi(sys.argv[1])
+#rp_s.tx_txt('RP:LOG CONSOLE')
 rp_s.tx_txt('GEN:RST')
 rp_s.tx_txt('ACQ:RST')
 
@@ -25,6 +25,8 @@ rp_s.tx_txt('ACQ:DEC 64');
 rp_s.tx_txt('ACQ:TRIG:LEV 0');
 rp_s.tx_txt('ACQ:TRIG:DLY 0');
 
+rp_s.tx_txt('ACQ:TRig:INT:ENABLE TRIG,OFF');
+print(rp_s.txrx_txt('ACQ:TRig:INT:ENABLE? TRIG'));
 
 rp_s.tx_txt('ACQ:START')
 time.sleep(1)
@@ -32,13 +34,13 @@ rp_s.tx_txt('ACQ:TRIG AWG_PE')
 rp_s.tx_txt('OUTPUT1:STATE ON');
 rp_s.tx_txt('SOUR1:TRIG:INT');
 
-rp_s.tx_txt('ACQ:TRIG:INT:STAT? 1000')
+rp_s.tx_txt('ACQ:TRIG:INT1000:STAT?')
 result = rp_s.rx_txt()
 if result == 'TIMEOUT':
     print("TIMEOUT")
     exit(1)
 
-rp_s.tx_txt('ACQ:TRIG:INT:FILL? 1000')
+rp_s.tx_txt('ACQ:TRIG:INT1000:FILL?')
 result = rp_s.rx_txt()
 if result == 'TIMEOUT':
     print("TIMEOUT")
