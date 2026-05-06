@@ -59,10 +59,11 @@ def main():
     # Reset and configure split trigger mode
     rp.rp_AcqReset()
     rp.rp_AcqSetSplitTrigger(True)  # Enable split trigger mode
+    for i in range(ch_num):
+        rp.rp_AcqSetIntMaskCh(channels[i],rp.RP_INT_TRIGGER,False)
 
     # Configure acquisition settings for each channel
     for i in range(ch_num):
-        rp.rp_AcqSetIntMaskCh(channels[i],rp.RP_INT_TRIGGER,False)
         rp.rp_AcqResetCh(channels[i])
         rp.rp_AcqSetDecimationFactorCh(channels[i], decimation[i])
         rp.rp_AcqSetGain(channels[i], rp.RP_LOW)
@@ -76,6 +77,7 @@ def main():
 
     for i in range(ch_num):
         # Wait for trigger with 3000 ms timeout (adjustable)
+        # print(rp.rp_AcqIntTriggerReadCh(channels[i], 1000))
         ret = rp.rp_AcqIntFillReadCh(channels[i], 3000)
         print(f"Channel {trig_ord[i]} data acquired ret = {rp.rp_GetError(ret)}")
 

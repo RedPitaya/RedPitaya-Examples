@@ -58,6 +58,8 @@ rp.rp_AcqSetTriggerLevel(rp.RP_T_CH_1, trig_lvl)
 rp.rp_AcqSetTriggerDelay(trig_dly)
 rp.rp_AcqSetIntMask(rp.RP_INT_TRIGGER,False)
 print(rp.rp_AcqGetIntMask(rp.RP_INT_TRIGGER))
+#rp.rp_AcqSetIntMask(rp.RP_INT_FILL,False)
+#print(rp.rp_AcqGetIntMask(rp.RP_INT_FILL))
 
 # Start Acquisition
 print("Acq_start")
@@ -68,8 +70,7 @@ rp.rp_AcqSetTriggerSrc(acq_trig_sour)
 time.sleep(0.1)
 
 # No interrupt is required as it is disabled.
-# print(rp.rp_AcqIntTriggerRead(1000)) # 1000 mS timeout
-
+#print(rp.rp_AcqIntTriggerRead(1000)) # 1000 mS timeout
 print(rp.rp_AcqIntFillRead(1000)) # 1000 mS timeout
 
 print("ACQ get data")
