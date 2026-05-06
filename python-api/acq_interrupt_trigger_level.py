@@ -69,9 +69,11 @@ time.sleep(0.1)
 rp.rp_AcqSetTriggerSrc(acq_trig_sour)
 time.sleep(0.1)
 
-print(rp.rp_AcqIntTriggerRead(1000)) # 1000 mS timeout
+ret = rp.rp_AcqIntTriggerRead(1000)
+print(f"Trigger IRQ ret = {rp.rp_GetError(ret)}")
 
-print(rp.rp_AcqIntFillRead(1000)) # 1000 mS timeout
+ret = rp.rp_AcqIntFillRead(1000)
+print(f"Fill IRQ ret = {rp.rp_GetError(ret)}")
 
 print("ACQ get data")
 tp=rp.rp_AcqGetWritePointerAtTrig()[1]

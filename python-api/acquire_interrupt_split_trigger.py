@@ -20,7 +20,7 @@ def main():
     if rp.rp_InitReset(False) != rp.RP_OK:
         print("Rp api init failed!", file=sys.stderr)
         return -1
-
+    # rp.rp_EnableDebugReg()
     # Get number of ADC channels (usually 2 or 4 depending on the model)
     # For 4-channel models (like SDRlab 122-16) it returns 4
     # For 2-channel models (like STEMlab 125-14) it returns 2
@@ -70,6 +70,9 @@ def main():
         rp.rp_AcqSetTriggerLevel(ch_trig[i], trig_lvl[i])
         rp.rp_AcqSetTriggerDelayCh(channels[i], trig_dly[i])
         rp.rp_AcqStartCh(channels[i])                      # Start acquisition
+        # rp.rp_AcqSetTriggerSrcCh(channels[i], trig_src[i]) # Set trigger source
+
+    for i in range(ch_num):
         rp.rp_AcqSetTriggerSrcCh(channels[i], trig_src[i]) # Set trigger source
 
     # Wait for trigger and buffer full for each channel
