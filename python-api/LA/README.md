@@ -1,18 +1,16 @@
-**README - Configuration Parameters Guide**
+## Protocol Settings
 
-This document describes the available configuration parameters for the system.
+### CAN Protocol Settings
 
-**CAN settings**
- 
 **Configuration:**
 ```json
 {
-	"acq_speed" : 100000000,
-	"fast_bitrate" : 2000000,
-	"invert_bit" : "No",
-	"nominal_bitrate" : 1000000,
-	"rx" : "DIN0",
-	"sample_point" : 80
+    "acq_speed": 100000000,
+    "fast_bitrate": 2000000,
+    "invert_bit": "No",
+    "nominal_bitrate": 1000000,
+    "rx": "DIN0",
+    "sample_point": 80
 }
 ```
 
@@ -22,7 +20,7 @@ This document describes the available configuration parameters for the system.
 
 2. **fast_bitrate** - Defines the fast bitrate in bits per second (bps). Must be a positive integer (e.g., 2000000 for 2 Mbps).
 
-3. **invert_bit** - Determines whether to invert the bit signal. Acceptable values are from the InvertBit enum:
+3. **invert_bit** - Determines whether to invert the bit signal. Acceptable values from the InvertBit enum:
    - "No" (default) - No inversion
    - "Yes" - Signal will be inverted
 
@@ -30,28 +28,31 @@ This document describes the available configuration parameters for the system.
 
 5. **rx** - Specifies the receive line (input channel) to use. Valid options from the Lines enum:
    - "None" - No line selected
-   - "DIN0" - Digital Input 0
-   - "DIN1" - Digital Input 1
-   - "DIN2" - Digital Input 2
-   - "DIN3" - Digital Input 3
-   - "DIN4" - Digital Input 4
-   - "DIN5" - Digital Input 5
-   - "DIN6" - Digital Input 6
-   - "DIN7" - Digital Input 7
+   - "DIN0" through "DIN7" - Digital Input 0-7
 
 6. **sample_point** - Sets the sample point percentage. Must be an integer between 0 and 100 (e.g., 80 for 80%).
 
+**CAN Configuration Example:**
+```python
+# Setting all CAN parameters
+la.setDecoderSettingsString("can1", "rx", "DIN0")
+la.setDecoderSettingsUInt("can1", "nominal_bitrate", 500000)
+la.setDecoderSettingsUInt("can1", "fast_bitrate", 2000000)
+la.setDecoderSettingsUInt("can1", "acq_speed", 100000000)
+la.setDecoderSettingsString("can1", "invert_bit", "No")
+la.setDecoderSettingsFloat("can1", "sample_point", 75.0)
+```
 
-**I2C settings**
+### I2C Protocol Settings
 
 **Configuration:**
 ```json
 {
-	"acq_speed" : 4000000,
-	"address_format" : "Shifted",
-	"invert_bit" : "No",
-	"scl" : "DIN0",
-	"sda" : "DIN1"
+    "acq_speed": 4000000,
+    "address_format": "Shifted",
+    "invert_bit": "No",
+    "scl": "DIN0",
+    "sda": "DIN1"
 }
 ```
 
@@ -59,39 +60,44 @@ This document describes the available configuration parameters for the system.
 
 1. **acq_speed** - Specifies the acquisition speed in Hertz (Hz) for signal sampling. Must be a positive integer value (e.g., 4000000 for 4 MHz). This affects the timing resolution of the I2C signal capture.
 
-2. **address_format** - Determines how I2C device addresses are interpreted. Acceptable values are from the AddressFormat enum:
-   - "Shifted" (default) - Address is treated as 7-bit value shifted left by 1 bit (common in most implementations)
-   - "Unshifted" - Address is treated as raw 8-bit value (including R/W bit)
+2. **address_format** - Determines how I2C device addresses are interpreted. Acceptable values from the AddressFormat enum:
+   - "Shifted" (default) - Address treated as 7-bit value shifted left by 1 bit
+   - "Unshifted" - Address treated as raw 8-bit value (including R/W bit)
 
-3. **invert_bit** - Controls whether the signal polarity should be inverted. Acceptable values are from the InvertBit enum:
+3. **invert_bit** - Controls whether the signal polarity should be inverted. Values from InvertBit enum:
    - "No" (default) - Normal signal polarity
    - "Yes" - Inverted signal polarity
 
-4. **scl** - Specifies the digital input line to use for the Serial Clock (SCL) signal. Valid options from the Lines enum:
-   - "None" - No line selected
-   - "DIN0" - Digital Input 0
-   - "DIN1" - Digital Input 1
-   - "DIN2" - Digital Input 2
-   - Up to "DIN7" - Digital Input 7
+4. **scl** - Specifies the digital input line for the Serial Clock (SCL) signal. Values from Lines enum: "None" or "DIN0" through "DIN7"
 
-5. **sda** - Specifies the digital input line to use for the Serial Data (SDA) signal. Uses the same Lines enum values as scl.
+5. **sda** - Specifies the digital input line for the Serial Data (SDA) signal. Same Lines enum values as scl.
 
-**SPI settings**
+**I2C Configuration Example:**
+```python
+# Setting all I2C parameters
+la.setDecoderSettingsString("i2c1", "scl", "DIN0")
+la.setDecoderSettingsString("i2c1", "sda", "DIN1")
+la.setDecoderSettingsUInt("i2c1", "acq_speed", 4000000)
+la.setDecoderSettingsString("i2c1", "address_format", "Shifted")
+la.setDecoderSettingsString("i2c1", "invert_bit", "No")
+```
+
+### SPI Protocol Settings
 
 **Configuration:**
 ```json
 {
-	"acq_speed": 0,
-	"bit_order": "MsbFirst",
-	"clk": "DIN0",
-	"cpha": 0,
-	"cpol": 0,
-	"cs": "DIN2",
-	"cs_polarity": "ActiveLow",
-	"invert_bit": "No",
-	"miso": "None",
-	"mosi": "DIN1",
-	"word_size": 8
+    "acq_speed": 0,
+    "bit_order": "MsbFirst",
+    "clk": "DIN0",
+    "cpha": 0,
+    "cpol": 0,
+    "cs": "DIN2",
+    "cs_polarity": "ActiveLow",
+    "invert_bit": "No",
+    "miso": "None",
+    "mosi": "DIN1",
+    "word_size": 8
 }
 ```
 
@@ -103,8 +109,7 @@ This document describes the available configuration parameters for the system.
    - "MsbFirst" (default) - Most significant bit first
    - "LsbFirst" - Least significant bit first
 
-3. **clk** - Clock line (SCLK) selection. Values from Lines enum:
-   - "DIN0" through "DIN7" - Digital input lines
+3. **clk** - Clock line (SCLK) selection. Values from Lines enum: "DIN0" through "DIN7"
 
 4. **cpha** - Clock phase (0 or 1):
    - 0: Data sampled on leading clock edge
@@ -114,43 +119,54 @@ This document describes the available configuration parameters for the system.
    - 0: Clock idle low (default)
    - 1: Clock idle high
 
-6. **cs** - Chip select line. Uses same Lines enum values as clk.
+6. **cs** - Chip select line. Same Lines enum values
 
 7. **cs_polarity** - Chip select active state. Values from CsPolarity enum:
    - "ActiveLow" (default) - CS active when low
    - "ActiveHigh" - CS active when high
 
-8. **invert_bit** - Signal inversion control. Values from InvertBit enum:
-   - "No" (default) - Normal polarity
-   - "Yes" - Inverted polarity
+8. **invert_bit** - Signal inversion control. Values from InvertBit enum
 
-9. **miso** - Master Input Slave Output line. Uses Lines enum.
+9. **miso** - Master Input Slave Output line. Lines enum values
 
-10. **mosi** - Master Output Slave Input line. Uses Lines enum.
+10. **mosi** - Master Output Slave Input line. Lines enum values
 
-11. **word_size** - Data word size in bits (default 8).
+11. **word_size** - Data word size in bits (default 8)
 
 **SPI Mode Combinations:**
-The combination of CPOL and CPHA defines the SPI mode:
 - Mode 0: CPOL=0, CPHA=0
 - Mode 1: CPOL=0, CPHA=1
 - Mode 2: CPOL=1, CPHA=0
 - Mode 3: CPOL=1, CPHA=1
 
-**UART settings**
+**SPI Configuration Example:**
+```python
+# Configure SPI Mode 0
+la.setDecoderSettingsString("spi1", "clk", "DIN0")
+la.setDecoderSettingsString("spi1", "mosi", "DIN1")
+la.setDecoderSettingsString("spi1", "miso", "DIN2")
+la.setDecoderSettingsString("spi1", "cs", "DIN3")
+la.setDecoderSettingsUInt("spi1", "cpol", 0)
+la.setDecoderSettingsUInt("spi1", "cpha", 0)
+la.setDecoderSettingsString("spi1", "bit_order", "MsbFirst")
+la.setDecoderSettingsString("spi1", "cs_polarity", "ActiveLow")
+la.setDecoderSettingsUInt("spi1", "word_size", 8)
+```
+
+### UART Protocol Settings
 
 **Configuration:**
 ```json
 {
-	"acq_speed": 1000000,
-	"baudrate": 115200,
-	"bitOrder": "LsbFirst",
-	"invert": "No",
-	"num_data_bits": "Bits8",
-	"num_stop_bits": "Stop_Bit_10",
-	"parity": "None",
-	"rx": "DIN0",
-	"tx": "None"
+    "acq_speed": 1000000,
+    "baudrate": 115200,
+    "bitOrder": "LsbFirst",
+    "invert": "No",
+    "num_data_bits": "Bits8",
+    "num_stop_bits": "Stop_Bit_10",
+    "parity": "None",
+    "rx": "DIN0",
+    "tx": "None"
 }
 ```
 
@@ -158,7 +174,7 @@ The combination of CPOL and CPHA defines the SPI mode:
 
 1. **acq_speed** - Acquisition speed in Hertz (Hz) for signal sampling. Must be significantly higher than baudrate (default 1MHz). Recommended minimum is 4x baudrate.
 
-2. **baudrate** - Communication speed in bits per second (default 115200). Common values include 9600, 19200, 38400, 57600, 115200.
+2. **baudrate** - Communication speed in bits per second (default 115200). Common values: 9600, 19200, 38400, 57600, 115200.
 
 3. **bitOrder** - Bit transmission order. Values from UartBitOrder enum:
    - "LsbFirst" (default) - Least significant bit first (standard for UART)
@@ -169,28 +185,27 @@ The combination of CPOL and CPHA defines the SPI mode:
    - "Yes" - Inverted signal (idle high instead of idle low)
 
 5. **num_data_bits** - Number of data bits per character. Values from NumDataBits enum:
-   - "Bits5" - 5 data bits
-   - "Bits6" - 6 data bits
-   - "Bits7" - 7 data bits
-   - "Bits8" (default) - 8 data bits
-   - "Bits9" - 9 data bits
+   - "Bits5" through "Bits9" (default "Bits8")
 
 6. **num_stop_bits** - Stop bits configuration. Values from NumStopBits enum:
-   - "Stop_Bit_No" - No stop bit
-   - "Stop_Bit_05" - 0.5 stop bits
-   - "Stop_Bit_10" (default) - 1 stop bit
-   - "Stop_Bit_15" - 1.5 stop bits
-   - "Stop_Bit_20" - 2 stop bits
+   - "Stop_Bit_No", "Stop_Bit_05", "Stop_Bit_10" (default), "Stop_Bit_15", "Stop_Bit_20"
 
 7. **parity** - Parity bit configuration. Values from Parity enum:
-   - "None" (default) - No parity bit
-   - "Even" - Even parity
-   - "Odd" - Odd parity
-   - "Always_0" - Parity bit always 0
-   - "Always_1" - Parity bit always 1
+   - "None" (default), "Even", "Odd", "Always_0", "Always_1"
 
-8. **rx** - Receive line selection. Values from Lines enum:
-   - "None" - No receive line
-   - "DIN0" through "DIN7" - Digital input lines
+8. **rx** - Receive line selection. Values from Lines enum
 
-9. **tx** - Transmit line selection. Uses same Lines enum values as rx (default "None").
+9. **tx** - Transmit line selection. Same Lines enum values (default "None")
+
+**UART Configuration Example:**
+```python
+# Configure UART 8N1 (8 data bits, no parity, 1 stop bit)
+la.setDecoderSettingsString("uart1", "rx", "DIN0")
+la.setDecoderSettingsUInt("uart1", "baudrate", 115200)
+la.setDecoderSettingsString("uart1", "num_data_bits", "Bits8")
+la.setDecoderSettingsString("uart1", "parity", "None")
+la.setDecoderSettingsString("uart1", "num_stop_bits", "Stop_Bit_10")
+la.setDecoderSettingsString("uart1", "bitOrder", "LsbFirst")
+la.setDecoderSettingsString("uart1", "invert", "No")
+la.setDecoderSettingsUInt("uart1", "acq_speed", 1000000)
+```
