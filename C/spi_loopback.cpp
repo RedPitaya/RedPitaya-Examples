@@ -59,11 +59,11 @@ int main(int argc, char *argv[]) {
   printf("Set settings: %d\n", res);
 
   res = rp_SPI_SetBufferForMessage(
-      0, (uint8_t *)buffer, true, strlen(buffer),
+      0, (uint8_t *)buffer, strlen(buffer), true,
       false); // Set buffer for first message and create RX buffer.
   printf("Set buffers for first msg: %d\n", res);
 
-  res = rp_SPI_SetBufferForMessage(1, 0, true, 100, false); // Create RX buffer.
+  res = rp_SPI_SetBufferForMessage(1, 0, 100, true, false); // Create RX buffer.
   printf("Set buffers for second msg: %d\n", res);
 
   res = rp_SPI_ReadWrite(); // Pass message to SPI.
