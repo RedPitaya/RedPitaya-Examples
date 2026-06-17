@@ -163,4 +163,6 @@ Please follow the structure and documentation style used in the `API_examples/Py
 
 This examples repository is released under the GNU General Public License.
 
+---
+
 Red Pitaya teachnical team
