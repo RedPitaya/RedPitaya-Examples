@@ -2,8 +2,12 @@
 
 import sys
 import time
-import redpitaya_scpi as scpi
+import os
 import matplotlib.pyplot as plot
+
+sys.path.append(os.path.join(os.path.dirname(__file__), 'lib'))
+import redpitaya_scpi as scpi
+
 
 rp_s = scpi.scpi(sys.argv[1])
 

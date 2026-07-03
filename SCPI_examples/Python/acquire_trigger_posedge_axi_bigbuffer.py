@@ -1,8 +1,12 @@
 #!/usr/bin/python3
 
 import sys
-import redpitaya_scpi as scpi
+import os
 import matplotlib.pyplot as plot
+
+sys.path.append(os.path.join(os.path.dirname(__file__), 'lib'))
+import redpitaya_scpi as scpi
+
 import struct
 import numpy as np
 

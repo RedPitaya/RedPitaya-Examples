@@ -168,6 +168,8 @@ while True:
 write_pointer = rp.rp_AcqAxiGetWritePointerAtTrig(rp.RP_CH_1)[1]
 print(f"Write pointer at trigger: {write_pointer}")
 
+# Account for trigger delay
+write_pointer = (write_pointer + trigger_delay) % samples_to_capture
 
 # ==============================================================================
 # PERFORMANCE COMPARISON - Test different data retrieval methods

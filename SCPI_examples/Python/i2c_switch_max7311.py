@@ -1,9 +1,14 @@
 #!/usr/bin/python3
 
 import sys
+import os
 import time
-from struct import *
+import matplotlib.pyplot as plot
+
+sys.path.append(os.path.join(os.path.dirname(__file__), 'lib'))
 import redpitaya_scpi as scpi
+
+from struct import *
 
 rp_s = scpi.scpi(sys.argv[1])
 
@@ -19,13 +24,13 @@ print("Set force mode")
 
 print("Turn on AC/DC ch1 & ch2")
 
-value = 0x55;
+value = 0x55
 rp_s.tx_txt('I2C:S:W2 ' + str(value)) # write to i2c
 print("Write value for reg 0x2",value)
 
 time.sleep(1)
 
-value = (value & ~0x0F);
+value = (value & ~0x0F)
 rp_s.tx_txt('I2C:S:W2 ' + str(value)) # write to i2c
 print("Write value for reg 0x2",value)
 
@@ -33,13 +38,13 @@ time.sleep(3)
 
 print("Turn off AC/DC ch1 & ch2")
 
-value = 0xAA;
+value = 0xAA
 rp_s.tx_txt('I2C:S:W2 ' + str(value)) # write to i2c
 print("Write value for reg 0x2",value)
 
 time.sleep(1)
 
-value = (value & ~0x0F);
+value = (value & ~0x0F)
 rp_s.tx_txt('I2C:S:W2 ' + str(value)) # write to i2c
 print("Write value for reg 0x2",value)
 

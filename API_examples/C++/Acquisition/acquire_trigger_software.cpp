@@ -2,6 +2,7 @@
  * This application acquires a signal on a specific channel */
 
 #include "rp.h"
+#include "rp_hw_calib.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -13,6 +14,11 @@ int main(int argc, char **argv) {
     fprintf(stderr, "Rp api init failed!\n");
   }
 
+  if (rp_CalibInit() != RP_HW_CALIB_OK) {
+    fprintf(stderr, "Error init calibration\n");
+    return -1;
+  }
+
   /*
 If the API reset is not performed during initialization, then you need to
 apply calibration in the FPGA. This method only works for calibration
@@ -22,7 +28,7 @@ application "calib -u"
   rp_AcqSetCalibInFPGA(RP_CH_1);
 
   /*LOOB BACK FROM OUTPUT 2 - ONLY FOR TESTING*/
-//  rp_EnableDebugReg();
+  //  rp_EnableDebugReg();
   rp_GenReset();
   rp_GenFreq(RP_CH_1, 1000.0);
   rp_GenAmp(RP_CH_1, 1.0);

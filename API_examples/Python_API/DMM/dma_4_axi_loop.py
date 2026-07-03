@@ -200,6 +200,9 @@ try:
         # Get trigger positions for all channels
         trigger_positions = [rp.rp_AcqAxiGetWritePointerAtTrig(channel)[1] 
                            for channel in channels]
+        # Account for trigger delay
+        trigger_positions = [(pos + TRIGGER_DELAY) % SAMPLES_PER_CHANNEL for pos in trigger_positions]
+        
         if DEBUG:
             for i, pos in enumerate(trigger_positions):
                 print(f"CH{i+1} trigger position: {pos}")

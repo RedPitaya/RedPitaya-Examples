@@ -1,8 +1,12 @@
 #!/usr/bin/python3
 
-import redpitaya_scpi as scpi
 import sys
+import os
 import math
+import matplotlib.pyplot as plt
+
+sys.path.append(os.path.join(os.path.dirname(__file__), 'lib'))
+import redpitaya_scpi as scpi
 
 
 rp_s = scpi.scpi(sys.argv[1])
@@ -15,26 +19,27 @@ x = ''
 t = []
 
 for i in range(0, BUFF_SIZE):
-	t.append((2 * math.pi) / BUFF_SIZE * i)
+    t.append((2 * math.pi) / BUFF_SIZE * i)
 
 for i in range(0, BUFF_SIZE-1):
-	if(i != BUFF_SIZE-2):
-		b = math.sin(t[i]) + (1.0/3.0) + math.sin(t[i] * 3)
-		if(b <= -1 or b >= 1):
-			x += str(-1.0) + ', '
-			y += str(-1.0) + ', '
-		else:
-			x += str(math.sin(t[i]) + (1.0/3.0) + math.sin(t[i] * 3)) + ', '
-			y += str((1.0 / 2.0) * math.sin(t[i]) + (1.0/4.0) * math.sin(t[i] * 4)) + ', '
+    if i != BUFF_SIZE-2:
+        b = math.sin(t[i]) + (1.0/3.0) + math.sin(t[i] * 3)
+        if(b <= -1 or b >= 1):
+            x += str(-1.0) + ', '
+            y += str(-1.0) + ', '
+        else:
+            x += str(math.sin(t[i]) + (1.0/3.0) + math.sin(t[i] * 3)) + ', '
+            y += str((1.0 / 2.0) * math.sin(t[i]) + (1.0/4.0) * math.sin(t[i] * 4)) + ', '
 
-	else:
-		c = math.sin(t[i]) + (1.0/3.0) + math.sin(t[i] * 3)
-		if(c <= -1 or c >= 1):
-			x += str(-1.0)
-			y += str(-1.0)
-		else:
-			x += str(math.sin(t[i]) + (1.0/3.0) + math.sin(t[i] * 3))
-			y += str((1.0 / 2.0) * math.sin(t[i]) + (1.0/4.0) * math.sin(t[i] * 4))
+    else:
+        c = math.sin(t[i]) + (1.0/3.0) + math.sin(t[i] * 3)
+
+        if c <= -1 or c >= 1:
+            x += str(-1.0)
+            y += str(-1.0)
+        else:
+            x += str(math.sin(t[i]) + (1.0/3.0) + math.sin(t[i] * 3))
+            y += str((1.0 / 2.0) * math.sin(t[i]) + (1.0/4.0) * math.sin(t[i] * 4))
 
 rp_s.tx_txt('GEN:RST')
 
@@ -60,7 +65,6 @@ buff_string = rp_s.rx_txt()
 buff_string = buff_string.strip('{}\n\r').replace("  ", "").split(',')
 buff = list(map(float, buff_string))
 
-import matplotlib.pyplot as plt
 plt.plot(buff)
 plt.ylabel('Voltage')
 plt.show()
