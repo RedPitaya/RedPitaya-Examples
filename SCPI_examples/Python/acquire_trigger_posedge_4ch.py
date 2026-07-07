@@ -1,8 +1,13 @@
 #!/usr/bin/python3
 
 import sys
-import redpitaya_scpi as scpi
+import os
 import matplotlib.pyplot as plot
+
+sys.path.append(os.path.join(os.path.dirname(__file__), 'lib'))
+import redpitaya_scpi as scpi
+
+
 
 rp_s = scpi.scpi(sys.argv[1])
 
@@ -11,8 +16,8 @@ rp_s.tx_txt('ACQ:DATA:FORMAT ASCII')
 rp_s.tx_txt('ACQ:DATA:UNITS VOLTS')
 
 rp_s.tx_txt('ACQ:DEC 1')
-rp_s.tx_txt('ACQ:TRIG:LEV 0');
-rp_s.tx_txt('ACQ:TRIG:DLY 0');
+rp_s.tx_txt('ACQ:TRIG:LEV 0')
+rp_s.tx_txt('ACQ:TRIG:DLY 0')
 
 rp_s.tx_txt('ACQ:START')
 rp_s.tx_txt('ACQ:TRIG CH1_PE')

@@ -55,6 +55,7 @@ import rp
 buffer_size      = 1024         # Number of samples to capture per channel
 decimation       = 1            # Decimation factor (1 = 125 MS/s, 8 = 15.625 MS/s)
 trigger_level    = 0.2          # Trigger level in volts
+trigger_delay    = buffer_size  # Number of samples after trigger to capture
 output_filename  = "out.txt"    # Output file name
 
 print("=" * 70)
@@ -93,8 +94,8 @@ dma_total_size    = memory_region[2]
 print(f"DMA Memory - Start: 0x{dma_start_address:X}, Size: {dma_total_size:,} bytes ({dma_total_size / (1024**2):.2f} MB)")
 
 rp.rp_AcqAxiSetDecimationFactor(decimation)
-rp.rp_AcqAxiSetTriggerDelay(rp.RP_CH_1, buffer_size)
-rp.rp_AcqAxiSetTriggerDelay(rp.RP_CH_2, buffer_size)
+rp.rp_AcqAxiSetTriggerDelay(rp.RP_CH_1, trigger_delay)
+rp.rp_AcqAxiSetTriggerDelay(rp.RP_CH_2, trigger_delay)
 
 channel1_start_address = dma_start_address
 channel2_start_address = int(dma_start_address + (dma_total_size / 2))
@@ -142,6 +143,10 @@ print("\nRetrieving data from DMA buffers...")
 
 write_pos_ch1 = rp.rp_AcqAxiGetWritePointerAtTrig(rp.RP_CH_1)[1]
 write_pos_ch2 = rp.rp_AcqAxiGetWritePointerAtTrig(rp.RP_CH_2)[1]
+
+# Account for trigger delay
+write_pos_ch1 = (write_pos_ch1 + trigger_delay) % buffer_size
+write_pos_ch2 = (write_pos_ch2 + trigger_delay) % buffer_size
 
 rp.rp_AcqAxiGetDataRawNP(rp.RP_CH_1, write_pos_ch1, dma_data_ch1)
 rp.rp_AcqAxiGetDataRawNP(rp.RP_CH_2, write_pos_ch2, dma_data_ch2)

@@ -51,6 +51,7 @@ read_chunk_size = 1024          # Number of samples to read per iteration
 decimation = 1                  # Decimation factor (1,2,4,8,16,17,18,...,65536)
                                 # 1 = 125 MS/s, 8 = 15.625 MS/s
 trigger_level = 0.2             # Trigger level in volts
+trigger_delay = data_size       # Number of samples after trigger to capture
 output_filename = "out.txt"     # Output file name
 
 print("=" * 70)
@@ -100,8 +101,8 @@ rp.rp_AcqAxiSetDecimationFactor(decimation)
 
 # Set trigger delay for both channels
 # This defines how many samples after the trigger to capture
-rp.rp_AcqAxiSetTriggerDelay(rp.RP_CH_1, data_size)
-rp.rp_AcqAxiSetTriggerDelay(rp.RP_CH_2, data_size)
+rp.rp_AcqAxiSetTriggerDelay(rp.RP_CH_1, trigger_delay)
+rp.rp_AcqAxiSetTriggerDelay(rp.RP_CH_2, trigger_delay)
 
 # Divide available memory between two channels (50% each)
 channel1_start_address = dma_start_address
@@ -176,6 +177,10 @@ print("\nRetrieving data from DMA buffers...")
 # Get write pointer positions at trigger moment
 write_pos_ch1 = rp.rp_AcqAxiGetWritePointerAtTrig(rp.RP_CH_1)[1]
 write_pos_ch2 = rp.rp_AcqAxiGetWritePointerAtTrig(rp.RP_CH_2)[1]
+
+# Account for trigger delay
+write_pos_ch1 = (write_pos_ch1 + trigger_delay) % data_size
+write_pos_ch2 = (write_pos_ch2 + trigger_delay) % data_size
 
 print(f"Write pointer at trigger - CH1: {write_pos_ch1}, CH2: {write_pos_ch2}")
 

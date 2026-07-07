@@ -61,6 +61,7 @@ Examples are organized by feature area. SCPI and API examples share the same dir
 - `E3_source_code/` - Source code for the E3 expansion module.
 - `web-tutorial/` - Web application tutorials and supporting examples.
 - `old/` - Archived or legacy material kept for reference.
+- `Tests/` - Test scripts for verifying Red Pitaya functionality.
 
 ---
 

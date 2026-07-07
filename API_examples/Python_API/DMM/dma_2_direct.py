@@ -197,6 +197,9 @@ print("=" * 70)
 write_pointer_at_trigger = rp.rp_AcqAxiGetWritePointerAtTrig(rp.RP_CH_1)[1]
 print(f"Write pointer at trigger: {write_pointer_at_trigger:,}")
 
+# Account for trigger delay
+write_pointer_at_trigger = (write_pointer_at_trigger + trigger_delay_samples) % samples
+
 # Get data using direct memory access (returns memory spans without copying)
 print("\nAccessing DMA memory directly (zero-copy)...")
 result = rp.rp_AcqAxiGetDataRawDirect(rp.RP_CH_1, write_pointer_at_trigger, samples)

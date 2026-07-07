@@ -2,17 +2,18 @@
 CFLAGS  = -Wall -std=c++20 ## -Werror
 CFLAGS += -I/opt/redpitaya/include
 CFLAGS += -I/opt/redpitaya/include/api250-12
-LDFLAGS = -L/opt/redpitaya/lib
-LDLIBS  = -static -lrp-hw-can -lrp -lrp-hw-calib -lrp-hw-profiles
+
+LDFLAGS = -L/opt/redpitaya/lib -Wl,-rpath,/opt/redpitaya/lib
+LDLIBS  = -lrp-hw-can -lrp -lrp-hw-calib -lrp-hw-profiles
 LDLIBS += -lrp-gpio -lrp-i2c -lrp-hw -lm -lstdc++ -lpthread -li2c -lsocketcan
 
 # Programs organized by subdirectory
-ANALOG_PRGS = Analog/analog_inputs \
-              Analog/analog_outputs
+ANALOG_PRGS =       Analog/analog_inputs \
+                    Analog/analog_outputs
 
-DIGITAL_PRGS = Digital/digital_led_bar \
-               Digital/digital_led_blink \
-               Digital/digital_push_button
+DIGITAL_PRGS =      Digital/digital_led_bar \
+                    Digital/digital_led_blink \
+                    Digital/digital_push_button
 
 DIGITAL_COMM_PRGS = Digital_communication/i2c \
                     Digital_communication/spi \
@@ -25,31 +26,41 @@ DIGITAL_COMM_PRGS = Digital_communication/i2c \
                     Digital_communication/i2c_eeprom_read_calib \
                     Digital_communication/i2c_switch_max7311
 
-ACQUISITION_PRGS = Acquisition/acquire_trigger_software \
-                   Acquisition/acquire_trigger_posedge \
-                   Acquisition/acquire_signal_check \
-                   Acquisition/acquire_split_trigger \
-                   Acquisition/acquire_4ch_trigger_software
+ACQ_GEN_PRGS =      Acq_Gen/acquire_trigger_software_in_loop \
+                    Acq_Gen/acquire_trigger_software_keep_arm_in_loop
 
-GENERATION_PRGS = Generation/generate_arbitrary_waveform \
-                  Generation/generate_burst_trigger_external \
-                  Generation/generate_burst_trigger_software \
-                  Generation/generate_continuous \
-                  Generation/generate_two_burst_trigger_software \
-                  Generation/generate_two_trigger_software_sync \
-                  Generation/generate_continuous_dma
+ACQUISITION_PRGS =  Acquisition/acquire_trigger_software \
+                    Acquisition/acquire_trigger_posedge \
+                    Acquisition/acquire_signal_check \
+                    Acquisition/acquire_split_trigger \
+                    Acquisition/acquire_4ch_trigger_software \
+                    Acquisition/acquire_interrupt_split_trigger \
+                    Acquisition/acquire_interrupt_trigger_software \
+                    Acquisition/timestamps \
+                    Acquisition/acquire_interrupt_split_trigger_thread
 
-DMM_PRGS = DMM/axi \
-           DMM/axi_4ch \
-           DMM/axi_without_copy \
-           DMM/generate_dma_burst
 
-HARDWARE_PRGS = Hardware/calibration_api
+GENERATION_PRGS =   Generation/generate_arbitrary_waveform \
+                    Generation/generate_burst_trigger_external \
+                    Generation/generate_burst_trigger_software \
+                    Generation/generate_continuous \
+                    Generation/generate_two_burst_trigger_software \
+                    Generation/generate_two_trigger_software_sync \
+                    Generation/generate_continuous_dma
+
+DMM_PRGS =          DMM/axi \
+                    DMM/axi_4ch \
+                    DMM/axi_without_copy \
+                    DMM/generate_dma_burst \
+                    DMM/generate_two_sync_continuous_dma
+
+HARDWARE_PRGS =     Hardware/calibration_api
 
 # All programs
 ALL_PRGS = $(ANALOG_PRGS) \
            $(DIGITAL_PRGS) \
            $(DIGITAL_COMM_PRGS) \
+           $(ACQ_GEN_PRGS) \
            $(ACQUISITION_PRGS) \
            $(GENERATION_PRGS) \
            $(DMM_PRGS) \
