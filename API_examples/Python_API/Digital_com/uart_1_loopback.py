@@ -67,6 +67,7 @@ Author: Red Pitaya
 Date: January 2026
 """
 
+import sys
 import numpy as np
 import rp_hw
 
@@ -178,10 +179,13 @@ def main():
         print(f"    Bytes read: {rx_buff.size}")
         
         if rx_buff.size > 0:
-            data_chunk_1 = rx_buff.tobytes().decode('utf-8')
-            print(f"    Data: \"{data_chunk_1}\"")
+            data_chunk_1 = rx_buff.tobytes()  # Keep as bytes
+            # Print as hexadecimal
+            print(f"    Data (hex): {data_chunk_1.hex()}")
+            # Or print as raw bytes if needed:
+            print(f"    Data (raw): {data_chunk_1}")
         else:
-            data_chunk_1 = ""
+            data_chunk_1 = b""  # Empty bytes
             print("    WARNING: No data received")
 
         # ===== STEP 7: Read Remaining Data =====
@@ -195,10 +199,13 @@ def main():
         print(f"    Bytes read: {bytes_read_2}")
         
         if bytes_read_2 > 0:
-            data_chunk_2 = rx_buff.tobytes().decode('utf-8')
-            print(f"    Data: \"{data_chunk_2}\"")
+            data_chunk_2 = rx_buff.tobytes()  # Keep as bytes
+            # Print as hexadecimal
+            print(f"    Data (hex): {data_chunk_2.hex()}")
+            # Or print as raw bytes if needed:
+            print(f"    Data (raw): {data_chunk_2}")
         else:
-            data_chunk_2 = ""
+            data_chunk_2 = b""  # Empty bytes
             print("    WARNING: No data received")
 
         # ===== STEP 8: Verify Data =====

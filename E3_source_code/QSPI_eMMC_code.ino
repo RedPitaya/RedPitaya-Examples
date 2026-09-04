@@ -1,4 +1,10 @@
-// Program for the Red Pitaya E3 add-on extension board (QSPI & EMMC) //
+// Program for the Red Pitaya eMMC QSPI add-on extension board
+//
+// Author:   Red Pitaya d.o.o.
+// Version:  1.1
+// Date:     4.9.2026
+//
+
 #include <PeripheralPins.h>
 #include <Wire.h>
 
@@ -59,16 +65,14 @@ const PinMap PinMap_USB[] = {
 #define RP_WDT_BOOT_TIME 10000   // Min boot time for the watchdog to start kicking \
                                  // Infinite loop (CLK not present) starts 20 seconds into booting process
 #define BTN_PWR_UP_TIME 500      // Button turn on/off time
-#define BOOT_TIME 45000          // Red Pitaya boot time (PWR_UP to PWR_ON)
+#define BOOT_TIME 30000          // Red Pitaya boot time (PWR_UP to PWR_ON)
 #define PWR_DOWN_TIME 20000      // Power down time
-#define PWR_DOWN_TIME_EXT 10000  // Extended power down time
 #define PWR_RST_TIME 5000        // Reset state time
 #define PWR_OFF_TIME 4000        // Force shut down time
 
 #define PWR_CHECK_TIME 8000  // Max power good check time
 #define WDT_MAX_TIME 5000    // Max watchdog inactive time
 #define BLINK_TIME 1000      // Normal blink time
-#define BOOT_DLY_TIME 1000   // Delayed boot time (15 sec prev)
 
 /* Additional Constants for Better Code Readability */
 #define LED_FAST_BLINK_DIVISOR 4     // Divider for fast LED blink (4x faster)
@@ -77,6 +81,9 @@ const PinMap PinMap_USB[] = {
 #define PWR_OFF_FLASH_OFF_TIME 9500  // LED off time during power off flash
 #define MAX_REBOOT_COUNT 3           // Maximum number of reboots before failure
 #define I2C_BUFFER_SIZE 4            // Standard I2C message size
+#define HW_VERSION_REQ_CMD 0xFC      // Request hardware version
+#define VERSION_REQ_CMD 0xFD         // Request firmware version
+#define TOGGLE_WATCHDOG 0xFE         // Toggle watchdog disable flag (default false)
 #define VERBOSE_TOGGLE_CMD 0xFF      // Command to toggle verbose output
 
 /* Button Press Detection Constants */
@@ -85,14 +92,16 @@ const PinMap PinMap_USB[] = {
 #define WDT_REQUIRED_PRESS_COUNT 3       // Number of consecutive short presses needed
 
 /* E3 ID and hardware ID */
-#define E3_ID_HEX 0xE3AD0000
+#define E3_ID_HEX 0xE3AD0000    // General HWID for E3 boards
 #define E3_ERR_ID_HEX 0xE3330000
-#define HW_ID 0x01     // E3 Add-on hardware ID/revision number
-#define I2C_ADDR 0x10  // Change later if necessary
+#define HW_ID 0x01              // E3 Add-on hardware ID/revision number - QSPI eMMC board
+#define FW_VERSION_MAJOR 0x01   // Firmware version major
+#define FW_VERSION_MINOR 0x01   // Firmware version minor
+#define I2C_ADDR 0x10           // Change later if necessary
 /* REGISTER DEFINES */
 // Not implemented
 // #define EMMC_REG      0x00000000   // Booting from EMMC
-// #define I2C1_nUART    0x00000000  // Select I2C1 or UART (on the bus)
+// #define I2C1_nUART    0x00000000   // Select I2C1 or UART (on the bus)
 
 // UART and I2C startup
 HardwareSerial Serial1(UART_RX_PIN, UART_TX_PIN);
@@ -129,13 +138,14 @@ bool wdt_start = false;        // Watchdog check flag
 bool wdt_disable = false;       // Watchdog disable flag
 bool pwr_check_start = false;  // Power check flag
 
-unsigned long wdt_start_timer = 0;  // Timer for checking WDT
 unsigned long shut_down_timer = 0;
 unsigned long pwr_on_timer = 0;
 
-volatile bool i2c_err_rspnd = false;     // Respond with any errors
-volatile bool i2c_state_change = false;  // State change over I2C
-volatile bool verb_out = true;           // Enable verbose output through UART
+volatile bool i2c_err_rspnd = false;         // Respond with any errors
+volatile bool i2c_state_change = false;      // State change over I2C
+volatile bool i2c_version_rspnd = false;     // Respond with firmware version
+volatile bool i2c_hw_version_rspnd = false;  // Respond with hardware version
+volatile bool verb_out = true;               // Enable verbose output through UART
 
 
 /* ### LED functions ### */
@@ -194,7 +204,7 @@ void LED_pwrOff_flash(bool reset) {
     // Check state
     if (flash) {
       // Flash LED once (1 Hz)
-      if (red_led_time - red_led_time_old >= 250) {
+      if (red_led_time - red_led_time_old >= PWR_OFF_FLASH_ON_TIME) {
         red_led_time_old = red_led_time;
 
         // Flash LED
@@ -208,7 +218,7 @@ void LED_pwrOff_flash(bool reset) {
       }
     } else {
       // LED OFF time
-      if (red_led_time - red_led_time_old >= 9500) {
+      if (red_led_time - red_led_time_old >= PWR_OFF_FLASH_OFF_TIME) {
         red_led_time_old = red_led_time;
         flash = true;
       }
@@ -434,21 +444,53 @@ bool RP_power_on_off(bool reset) {
 void I2C0_request_handler(void) {
   // Processes the request from the I2C line and sends the correct response
   // Use stack allocation instead of malloc for better embedded performance
-  uint8_t e3_i2c_data[4] = { 0 };  // Initialize to zero without memset
+  uint8_t e3_i2c_data[I2C_BUFFER_SIZE] = { 0 };  // Initialize to zero without memset
 
-  if (i2c_err_rspnd) {
+  if (i2c_hw_version_rspnd) {
+    // Prepare hardware version data
+    e3_i2c_data[0] = (uint8_t)((E3_ID_HEX & 0xFF000000) >> 24);
+    e3_i2c_data[1] = (uint8_t)((E3_ID_HEX & 0x00FF0000) >> 16);
+    e3_i2c_data[2] = (uint8_t)HW_ID;
+    e3_i2c_data[3] = 0x00;
+
+    Wire0.write(e3_i2c_data, I2C_BUFFER_SIZE);
+    i2c_hw_version_rspnd = false;
+
+    if (verb_out) {
+      Serial1.print("HW ver ");
+      Serial1.println(HW_ID, HEX);
+    }
+
+  } else if (i2c_version_rspnd) {
+    // Prepare version data
+    e3_i2c_data[0] = (uint8_t)((E3_ID_HEX & 0xFF000000) >> 24);
+    e3_i2c_data[1] = (uint8_t)((E3_ID_HEX & 0x00FF0000) >> 16);
+    e3_i2c_data[2] = (uint8_t)FW_VERSION_MAJOR;
+    e3_i2c_data[3] = (uint8_t)FW_VERSION_MINOR;
+
+    Wire0.write(e3_i2c_data, I2C_BUFFER_SIZE);
+    i2c_version_rspnd = false;
+
+    if (verb_out) {
+      Serial1.print("FW ver ");
+      Serial1.print(FW_VERSION_MAJOR, HEX);
+      Serial1.print(".");
+      Serial1.println(FW_VERSION_MINOR, HEX);
+    }
+
+  } else if (i2c_err_rspnd) {
     // Prepare data
     e3_i2c_data[0] = (uint8_t)((E3_ERR_ID_HEX & 0xFF000000) >> 24);
     e3_i2c_data[1] = (uint8_t)((E3_ERR_ID_HEX & 0x00FF0000) >> 16);
     e3_i2c_data[2] = (uint8_t)HW_ID;
     e3_i2c_data[3] = (uint8_t)RP_E3_ERR;
 
-    Wire0.write(e3_i2c_data, 4);  // If state change was requested beforehand send back Error code
+    Wire0.write(e3_i2c_data, I2C_BUFFER_SIZE);  // If state change was requested beforehand send back Error code
     i2c_err_rspnd = false;
 
     if (verb_out) {
       Serial1.print("Err ");
-      for (int i = 0; i < 4; i++) {
+      for (int i = 0; i < I2C_BUFFER_SIZE; i++) {
         Serial1.print(e3_i2c_data[i], HEX);
       }
       Serial1.println();
@@ -461,11 +503,11 @@ void I2C0_request_handler(void) {
     e3_i2c_data[2] = (uint8_t)HW_ID;
     e3_i2c_data[3] = (uint8_t)RP_PWR_state;
 
-    Wire0.write(e3_i2c_data, 4);  // Send data to Red Pitaya
+    Wire0.write(e3_i2c_data, I2C_BUFFER_SIZE);  // Send data to Red Pitaya
 
     if (verb_out) {
       Serial1.print("I2C0 req rec ");
-      for (int i = 0; i < 4; i++) {
+      for (int i = 0; i < I2C_BUFFER_SIZE; i++) {
         Serial1.print(e3_i2c_data[i], HEX);
       }
       Serial1.println();
@@ -482,7 +524,7 @@ void I2C0_receive_handler(int numBytes) {
 
   // Safety check for buffer size
   const int MAX_I2C_BYTES = 8;
-  if (numBytes > MAX_I2C_BYTES || numBytes < 4) {
+  if (numBytes > MAX_I2C_BYTES || numBytes < I2C_BUFFER_SIZE) {
     // Drain the buffer and return on invalid size
     while (Wire0.available()) {
       Wire0.read();
@@ -563,6 +605,46 @@ void I2C_check_state(uint8_t state) {
 
       if (verb_out) {
         Serial1.println("I2C switch PWR_DWN_RST");
+      }
+      return;
+
+    // HW_VERSION_REQ_CMD (0xFC), VERSION_REQ_CMD (0xFD), TOGGLE_WATCHDOG (0xFE) and VERBOSE_TOGGLE_CMD (0xFF)
+    // use values above the valid power state range (PWR_FAIL = 6), so they are safely handled here
+    // before the default branch's invalid-state check (state > PWR_FAIL).
+
+    case HW_VERSION_REQ_CMD:
+      // Request hardware version - response sent in next I2C request
+      i2c_hw_version_rspnd = true;
+      i2c_state_change = false;
+
+      if (verb_out) {
+        Serial1.println("I2C HW version req");
+      }
+      return;
+
+    case VERSION_REQ_CMD:
+      // Request firmware version - response sent in next I2C request
+      i2c_version_rspnd = true;
+      i2c_state_change = false;
+
+      if (verb_out) {
+        Serial1.println("I2C version req");
+      }
+      return;
+
+    case TOGGLE_WATCHDOG:
+      // Toggle watchdog disable flag
+      wdt_disable = !wdt_disable;
+      RP_E3_ERR = E3_OK;
+      i2c_state_change = false;
+      i2c_err_rspnd = true;
+
+      if (verb_out) {
+        if (wdt_disable) {
+          Serial1.println("Watchdog disabled");
+        } else {
+          Serial1.println("Watchdog enabled");
+        }
       }
       return;
 
@@ -673,7 +755,7 @@ void loop() {
       LED_blink(LED_GREEN_PIN, BLINK_TIME, false);  // Blink Green LED with 1 Hz
 
       /* Check Power Supply start condition */
-      if ((millis() - pwr_on_timer >= PWR_CHECK_TIME + BOOT_DLY_TIME) && !pwr_check_start) {
+      if ((millis() - pwr_on_timer >= PWR_CHECK_TIME) && !pwr_check_start) {
         pwr_check_start = true;
 
         if (verb_out) {
@@ -694,7 +776,7 @@ void loop() {
       }
 
       /* Check WDT start condition */
-      if ((millis() - pwr_on_timer >= RP_WDT_BOOT_TIME + BOOT_DLY_TIME) && !wdt_start && !wdt_disable) {
+      if ((millis() - pwr_on_timer >= RP_WDT_BOOT_TIME) && !wdt_start && !wdt_disable) {
         wdt_start = true;                           // Prevent recheck after first execution
         RP_WDTKickCheck(false, wdt_disable, true);  // Reset WDT timer
 
@@ -706,7 +788,7 @@ void loop() {
       /* Check WDT */
       if (wdt_start && RP_PSCheck()) {
         if (RP_WDTKickCheck(true, wdt_disable, false) == 0) {
-          if (millis() - pwr_on_timer >= BOOT_TIME + BOOT_DLY_TIME) {  // If WDT works
+          if (millis() - pwr_on_timer >= BOOT_TIME) {  // If WDT works
             RP_PWR_state = PWR_ON;
             first = true;
           }
@@ -814,12 +896,13 @@ void loop() {
       /* Red LED blink */
       LED_blink(LED_RED_PIN, BLINK_TIME * LED_SLOW_BLINK_MULTIPLIER, false);  // 0.5 Hz
 
-      /* Check for state switch conditions */  //! ?NEED TO CHECK PS_GOOD?
-      if (!RP_PSCheck() || RP_power_on_off(false) || (millis() - shut_down_timer >= PWR_DOWN_TIME + PWR_DOWN_TIME_EXT)) {
+      /* Check for state switch conditions */
+      /* !RP_PSCheck() allows early exit once shutdown is confirmed (PS_POR low is expected here) */
+      if (!RP_PSCheck() || RP_power_on_off(false) || (millis() - shut_down_timer >= PWR_DOWN_TIME)) {
         RP_PWR_state = PWR_RST;  // Switch to reset state
         first = true;
         if (!RP_PSCheck() && verb_out) {
-          Serial1.println("Power failure PWR_DWN_RST");
+          Serial1.println("Shutdown confirmed PWR_DWN_RST");
         }
       }
 
@@ -834,6 +917,7 @@ void loop() {
         LED_pwrOff_flash(true);      // Reset PWR OFF LED state and times
         RP_reboot_cnt(true, false);  // Reset boot time counter
         RP_power_on_off(true);       // Reset power_on_off flag
+        wdt_disable = false;         // Re-enable watchdog on full power cycle
         first = false;
 
         if (verb_out) {
@@ -857,9 +941,11 @@ void loop() {
 
       // Start reset proceedure
       if (first) {
-        RP_poweroff();            // Turn off Red Pitaya power
-        LED_blink(0, 0, true);    // Reset LED states and times
-        pwr_on_timer = millis();  // Boot timer
+        RP_poweroff();             // Turn off Red Pitaya power
+        LED_blink(0, 0, true);     // Reset LED states and times
+        RP_power_on_off(true);     // Reset button state
+        i2c_state_change = false;  // Discard any I2C command queued during reset
+        pwr_on_timer = millis();   // Boot timer
         first = false;
 
         if (verb_out) {
@@ -867,18 +953,13 @@ void loop() {
         }
       }
 
-      /* Reboot after PWR_RST_TIME secods */
+      /* Reboot after PWR_RST_TIME seconds, or fail after MAX_REBOOT_COUNT consecutive failures */
       if (millis() - pwr_on_timer >= PWR_RST_TIME) {
-        /*
-                // Check if the number of reboots is less than 3
-                if (RP_reboot_cnt(false, true) < 3){
-                    RP_PWR_state = PWR_UP;
-                }
-                else{
-                    RP_PWR_state = PWR_FAIL;
-                }
-                */
-        RP_PWR_state = PWR_UP;
+        if (RP_reboot_cnt(false, true) < MAX_REBOOT_COUNT) {
+          RP_PWR_state = PWR_UP;
+        } else {
+          RP_PWR_state = PWR_FAIL;
+        }
         first = true;
       }
 
@@ -944,7 +1025,7 @@ void loop() {
       LED_blink(LED_RED_PIN, BLINK_TIME * LED_SLOW_BLINK_MULTIPLIER, false);  // 0.5 Hz
 
       /* Check for one of PWR_OFF condition */
-      if (!RP_PSCheck() || RP_power_on_off(false) || (millis() - shut_down_timer >= PWR_DOWN_TIME + PWR_DOWN_TIME_EXT)) {
+      if (!RP_PSCheck() || RP_power_on_off(false) || (millis() - shut_down_timer >= PWR_DOWN_TIME)) {
         // Immediately power down Red Pitaya and clear flags
         RP_PWR_state = PWR_OFF;
         first = true;
